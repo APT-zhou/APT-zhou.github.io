@@ -79,13 +79,27 @@
 
 
 
-<meta property="og:type" content="website">
+<meta name="description" content="前言2017 年 9 月 5 日，由国外安全研究组织 lgtm.com 的安全研究人员发现的严重漏洞在Apache Struts 2官方发布，漏洞编号为 CVE-2017-9805（S2-052）, 攻击者可以传入精心构造的xml数据，远程命令执行。Struts2 REST插件的XStream组件存在反序列化漏洞，使用XStream组件对XML格式的数据包进行反序列化操作时，未对数据内容进行有效验">
+<meta property="og:type" content="article">
 <meta property="og:title" content="web security">
-<meta property="og:url" content="https://apt-zhou.github.io/index.html">
+<meta property="og:url" content="https://apt-zhou.github.io/2019/07/17/Struts2-052漏洞分析/index.html">
 <meta property="og:site_name" content="web security">
+<meta property="og:description" content="前言2017 年 9 月 5 日，由国外安全研究组织 lgtm.com 的安全研究人员发现的严重漏洞在Apache Struts 2官方发布，漏洞编号为 CVE-2017-9805（S2-052）, 攻击者可以传入精心构造的xml数据，远程命令执行。Struts2 REST插件的XStream组件存在反序列化漏洞，使用XStream组件对XML格式的数据包进行反序列化操作时，未对数据内容进行有效验">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/2B51518F-4BA4-45F0-8DB2-00CA371BD745.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/B70890FC-0A25-4BE4-BFFF-3DE6D6EED67A.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/6A81BE3B-4208-40FD-880D-20EBF9B38CC0.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/1395EE58-9C66-415A-98A3-453B28F1A32F.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/95FC3645-CA75-4311-97CB-3B33B1386B95.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/5DC74FC4-6116-4255-9294-5B32203720A1.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/EA70D07D-5925-4D15-A37A-E2110B39CA59.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/0E9DCB89-68EE-4A06-A636-33163FFC67BF.png">
+<meta property="og:image" content="evernotecid://34243D5A-0080-4E5B-82D3-EF8A5533BD45/appyinxiangcom/23351960/ENNote/p35?hash=416a87182134cfa3f029ac2fe3e64a60">
+<meta property="og:updated_time" content="2019-07-17T09:30:52.252Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="web security">
+<meta name="twitter:description" content="前言2017 年 9 月 5 日，由国外安全研究组织 lgtm.com 的安全研究人员发现的严重漏洞在Apache Struts 2官方发布，漏洞编号为 CVE-2017-9805（S2-052）, 攻击者可以传入精心构造的xml数据，远程命令执行。Struts2 REST插件的XStream组件存在反序列化漏洞，使用XStream组件对XML格式的数据包进行反序列化操作时，未对数据内容进行有效验">
+<meta name="twitter:image" content="https://apt-zhou.github.io/images/2019/07/2B51518F-4BA4-45F0-8DB2-00CA371BD745.png">
 
 
 
@@ -115,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="https://apt-zhou.github.io/">
+  <link rel="canonical" href="https://apt-zhou.github.io/2019/07/17/Struts2-052漏洞分析/">
 
 
 
 
 
-  <title>web security</title>
+  <title> | web security</title>
   
 
 
@@ -140,8 +154,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -214,9 +227,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -246,9 +259,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/17/Struts2-052漏洞分析/" itemprop="url">Untitled</a></h1>
+          <h1 class="post-title" itemprop="name headline"></h1>
         
 
         <div class="post-meta">
@@ -298,9 +309,7 @@
       
 
       
-        
-          
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h1><p>2017 年 9 月 5 日，由国外安全研究组织 lgtm.com 的安全研究人员发现的严重漏洞在Apache Struts 2官方发布，漏洞编号为 CVE-2017-9805（S2-052）, 攻击者可以传入精心构造的xml数据，远程命令执行。<br>Struts2 REST插件的XStream组件存在反序列化漏洞，使用XStream组件对XML格式的数据包进行反序列化操作时，未对数据内容进行有效验证，存在安全隐患，可被远程命令执行。<br>利用条件：使用 REST 插件并在受影响版本范围内。<br>利用方式：攻击者构建恶意数据包远程利用。<br>影响版本：Struts 2.1.2 - Struts 2.3.33, Struts 2.5 - Struts 2.5.12</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h1><p>2017 年 9 月 5 日，由国外安全研究组织 lgtm.com 的安全研究人员发现的严重漏洞在Apache Struts 2官方发布，漏洞编号为 CVE-2017-9805（S2-052）, 攻击者可以传入精心构造的xml数据，远程命令执行。<br>Struts2 REST插件的XStream组件存在反序列化漏洞，使用XStream组件对XML格式的数据包进行反序列化操作时，未对数据内容进行有效验证，存在安全隐患，可被远程命令执行。<br>利用条件：使用 REST 插件并在受影响版本范围内。<br>利用方式：攻击者构建恶意数据包远程利用。<br>影响版本：Struts 2.1.2 - Struts 2.3.33, Struts 2.5 - Struts 2.5.12</p>
 <h1 id="调试环境搭建"><a href="#调试环境搭建" class="headerlink" title="调试环境搭建"></a><strong>调试环境搭建</strong></h1><p>1）下载官方源码：<br>git clone <a href="https://github.com/apache/Struts.git" target="_blank" rel="noopener">https://github.com/apache/Struts.git</a><br>2）切换到2.5.12分支：<br>git checkout STRUTS_2_5_12<br>3) 把源码包中src/apps/rest-showcase整个文件夹拷贝出来，新建一个项目<br>4）用IDEA或者eclipse导入该maven项目<br>5) debug模式运行后就可以愉快的调试了<br><img src="https://apt-zhou.github.io/images/2019/07/2B51518F-4BA4-45F0-8DB2-00CA371BD745.png" alt="8da50717f7898bf33eaefe302295f2e5"></p>
 <h1 id="漏洞原理分析"><a href="#漏洞原理分析" class="headerlink" title="漏洞原理分析"></a><strong>漏洞原理分析</strong></h1><p>根据官方公告知道该漏洞出现在 XstreamHandler 类，在 struts2-rest-plugin-2.5.12.jar 包内。<br>于是查看该类，该类中有一个toObject方法，其作用就是对xml内容进行反序列化。<br><img src="https://apt-zhou.github.io/images/2019/07/B70890FC-0A25-4BE4-BFFF-3DE6D6EED67A.png" alt="5ead76f4153cb13d1164e9d79057621f"><br>先在此方法内打一个断点，然后构造数据包<br><img src="https://apt-zhou.github.io/images/2019/07/6A81BE3B-4208-40FD-880D-20EBF9B38CC0.png" alt="f4315825608415d2685701d110423738"><br>发送数据包后，会跳到断点处，此时，看到是上层调用栈中是ContentTypeInterceptor调用了该方法<br><img src="https://apt-zhou.github.io/images/2019/07/1395EE58-9C66-415A-98A3-453B28F1A32F.png" alt="72f30224353229ed31925e051e6b8da7"><br>ContentTypeInterceptor类中intercept方法会根据传入的Content-Type的值生成相应的对象，由于我们传入的是application/xml，所以对应生成一个xml的处理对象XStreamHandler。<br>继续f5，看到执行反序列化的函数unmarshal，在这个函数执行时没有进行数据安全检查，导致远程命令执行。<br><img src="https://apt-zhou.github.io/images/2019/07/95FC3645-CA75-4311-97CB-3B33B1386B95.png" alt="227328a30b2e1c73bbdafbf4e1018ac5"><br>接着进入unmarshal函数内，继续往下调试，AbstractReflectionConverter会一步步解析我们提交的xml标签和值，最终调用poc中代码<br><img src="https://apt-zhou.github.io/images/2019/07/5DC74FC4-6116-4255-9294-5B32203720A1.png" alt="e767f1e69d9c34b9f79d2437cec288d6"></p>
 <h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a><strong>漏洞复现</strong></h1><p>在页面<a href="http://localhost:8080//struts2-rest-showcase/orders/3/edit中点击Submit，" target="_blank" rel="noopener">http://localhost:8080//struts2-rest-showcase/orders/3/edit中点击Submit，</a><br><img src="https://apt-zhou.github.io/images/2019/07/EA70D07D-5925-4D15-A37A-E2110B39CA59.png" alt="816b09313f7dc90d11af504edb249049"><br>拦截HTTP请求并将请求体改为POC Payload，同时将Content-Type Header改为application/xml。<br>payload为：<br><code>&lt;map&gt; 
@@ -361,8 +370,6 @@
 <h1 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a><strong>修复建议</strong></h1><p>Version 2.3.0 to 2.3.33升级到Struts 2.3.34版本<br>Version 2.5.0 to 2.5.12升级到Struts 2.5.13版本</p>
 <h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a><strong>参考</strong></h4><p><a href="https://cwiki.apache.org/confluence/display/WW/S2-052" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/WW/S2-052</a></p>
 
-          
-        
       
     </div>
     
@@ -379,12 +386,12 @@
       
 
       
+      
+      
 
       
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -394,10 +401,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -405,6 +413,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -425,8 +437,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -468,6 +489,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调试环境搭建"><span class="nav-number">2.</span> <span class="nav-text">调试环境搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#漏洞原理分析"><span class="nav-number">3.</span> <span class="nav-text">漏洞原理分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#漏洞复现"><span class="nav-number">4.</span> <span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补丁"><span class="nav-number">5.</span> <span class="nav-text">补丁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#修复建议"><span class="nav-number">6.</span> <span class="nav-text">修复建议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参考"><span class="nav-number">6.0.0.1.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -608,6 +645,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
